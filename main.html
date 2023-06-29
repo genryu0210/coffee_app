@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coffee SNS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 10px;
+    }
+    .form-group button {
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .posts {
+      margin-top: 20px;
+    }
+    .post {
+      background-color: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+    .post-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .post-content {
+      margin-bottom: 5px;
+    }
+    .post-date {
+      font-size: 12px;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Coffee SNS</h1>
+    <div class="form-group">
+      <label for="title">タイトル</label>
+      <input type="text" id="title" placeholder="タイトルを入力してください">
+    </div>
+    <div class="form-group">
+      <label for="content">メモ</label>
+      <input type="text" id="content" placeholder="メモを入力してください">
+    </div>
+    <div class="form-group">
+      <button onclick="submitPost()">投稿する</button>
+    </div>
+    <div class="posts" id="posts">
+    </div>
+  </div>
+
+  <script>
+    // メモを保存する配列
+    let memos = [];
+
+    // ページ読み込み時に保存されているメモを表示
+    window.addEventListener('load', function() {
+      displayPosts();
+    });
+
+    // 投稿ボタンクリック時の処理
+    function submitPost() {
+      const titleInput = document.getElementById('title');
+      const contentInput = document.getElementById('content');
+
+      // タイトルとメモが入力されている場合のみ処理を行う
+      if (titleInput.value && contentInput.value) {
+        const post = {
+          title: titleInput.value,
+          content: contentInput.value,
+          date: new Date().toLocaleString()
+        };
+
+        memos.push(post);
+        savePosts();
+
+        titleInput.value = '';
+        contentInput.value = '';
+
+        displayPosts();
+      }
+    }
+
+    // メモをlocalStorageに保存
+    function savePosts() {
+      localStorage.setItem('memos', JSON.stringify(memos));
+    }
+
+    // localStorageからメモを取得して表示
+    function displayPosts() {
+      const savedMemos = localStorage.getItem('memos');
+
+      if (savedMemos) {
+        memos = JSON.parse(savedMemos);
+      }
+
+      const postsContainer = document.getElementById('posts');
+      postsContainer.innerHTML = '';
+
+      memos.forEach(function(post) {
+        const postElement = document.createElement('div');
+        postElement.classList.add('post');
+
+        const titleElement = document.createElement('div');
+        titleElement.classList.add('post-title');
+        titleElement.textContent = post.title;
+
+        const contentElement = document.createElement('div');
+        contentElement.classList.add('post-content');
+        contentElement.textContent = post.content;
+
+        const dateElement = document.createElement('div');
+        dateElement.classList.add('post-date');
+        dateElement.textContent = post.date;
+
+        postElement.appendChild(titleElement);
+        postElement.appendChild(contentElement);
+        postElement.appendChild(dateElement);
+
+        postsContainer.appendChild(postElement);
+      });
+    }
+  </script>
+</body>
+</html>
